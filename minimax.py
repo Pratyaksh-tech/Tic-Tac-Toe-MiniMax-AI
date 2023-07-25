@@ -21,9 +21,13 @@ def spaceIsFree(position):
 
 
 def insertLetter(letter, position):
+    global searches
     if spaceIsFree(position):
         board[position] = letter
-        showBoard(board)
+        if letter == bot: 
+        	showBoard(board)
+        	print(f"No. of moves Bot searches ahead are {searches}")
+        print('\n')
         if (checkDraw()):
             print("Draw!")
             exit()
@@ -99,50 +103,50 @@ def playerMove():
     insertLetter(player, position)
     return
 
-
 def compMove():
     bestScore = -800
     bestMove = 0
     for key in board.keys():
-        if (board[key] == ' '):
+        if board[key] == ' ':
             board[key] = bot
             score = minimax(board, 0, False)
             board[key] = ' '
-            if (score > bestScore):
+            if score > bestScore:
                 bestScore = score
                 bestMove = key
 
     insertLetter(bot, bestMove)
     return
 
-
 def minimax(board, depth, isMaximizing):
-    if (checkWhichMarkWon(bot)):
+    global searches
+    searches += 1;
+    if checkWhichMarkWon(bot):
         return 1
-    elif (checkWhichMarkWon(player)):
+    elif checkWhichMarkWon(player):
         return -1
-    elif (checkDraw()):
+    elif checkDraw():
         return 0
 
-    if (isMaximizing):
+    if isMaximizing:
         bestScore = -800
         for key in board.keys():
-            if (board[key] == ' '):
+            if board[key] == ' ':
                 board[key] = bot
                 score = minimax(board, depth + 1, False)
                 board[key] = ' '
-                if (score > bestScore):
+                if score > bestScore:
                     bestScore = score
         return bestScore
 
     else:
         bestScore = 800
         for key in board.keys():
-            if (board[key] == ' '):
+            if board[key] == ' ':
                 board[key] = player
                 score = minimax(board, depth + 1, True)
                 board[key] = ' '
-                if (score < bestScore):
+                if score < bestScore:
                     bestScore = score
         return bestScore
 
@@ -151,19 +155,17 @@ board = {1: ' ', 2: ' ', 3: ' ',
          4: ' ', 5: ' ', 6: ' ',
          7: ' ', 8: ' ', 9: ' '}
 
-
 print("Computer goes first! Good luck.")
 print("Positions are as follow:")
 print("1, 2, 3 ")
 print("4, 5, 6 ")
 print("7, 8, 9 ")
 print("\n")
+
 player = 'O'
 bot = 'X'
-
-
-global firstComputerMove
-firstComputerMove = True
+global searches
+searches = 0;
 
 while not checkForWin():
     compMove()
